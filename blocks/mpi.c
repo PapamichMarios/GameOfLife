@@ -84,7 +84,6 @@ int main() {
 
 	srand(time(NULL) + rank);
 
-	//omp_set_num_threads(4);
 	for(i=1; i<local_rows-1; i++) {
 		for(j=1; j<local_columns-1; j++) {
 			cells[local_columns*i +j] = rand() % 2;
@@ -155,25 +154,25 @@ int main() {
 
 		/*send to the neighbours the appropriate columns and rows(non-blocking)*/
 		//MPI_Isend( const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm, MPI_Request *request)
-		MPI_Isend( &cells[local_columns + 1] 					, local_columns - 2	, MPI_INT	, north_rank		, 0, comm, &ISReqs[0]);
-		MPI_Isend( &cells[local_columns * (local_rows - 2) + 1]			, local_columns - 2	, MPI_INT	, south_rank		, 1, comm, &ISReqs[1]);
-		MPI_Isend( &cells[local_columns + 1]					, 1			, column 	, west_rank		, 2, comm, &ISReqs[2]);
-		MPI_Isend( &cells[local_columns + (local_columns-2)]			, 1			, column	, east_rank		, 3, comm, &ISReqs[3]);
-		MPI_Isend( &cells[local_columns + 1]					, 1			, MPI_INT	, north_west_rank	, 4, comm, &ISReqs[4]);
-		MPI_Isend( &cells[local_columns + local_columns - 2]			, 1			, MPI_INT	, north_east_rank	, 5, comm, &ISReqs[5]);
-		MPI_Isend( &cells[local_columns * (local_rows-2) + 1]			, 1			, MPI_INT	, south_west_rank	, 6, comm, &ISReqs[6]);
-		MPI_Isend( &cells[local_columns * (local_rows-2) + local_columns -2]	, 1			, MPI_INT	, south_east_rank	, 7, comm, &ISReqs[7]);
+		MPI_Isend( &cells[local_columns + 1], local_columns - 2, MPI_INT, north_rank, 0, comm, &ISReqs[0]);
+		MPI_Isend( &cells[local_columns * (local_rows - 2) + 1], local_columns - 2, MPI_INT, south_rank, 1, comm, &ISReqs[1]);
+		MPI_Isend( &cells[local_columns + 1], 1, column, west_rank, 2, comm, &ISReqs[2]);
+		MPI_Isend( &cells[local_columns + (local_columns-2)], 1, column, east_rank, 3, comm, &ISReqs[3]);
+		MPI_Isend( &cells[local_columns + 1], 1, MPI_INT, north_west_rank, 4, comm, &ISReqs[4]);
+		MPI_Isend( &cells[local_columns + local_columns - 2], 1, MPI_INT, north_east_rank, 5, comm, &ISReqs[5]);
+		MPI_Isend( &cells[local_columns * (local_rows-2) + 1], 1, MPI_INT, south_west_rank, 6, comm, &ISReqs[6]);
+		MPI_Isend( &cells[local_columns * (local_rows-2) + local_columns -2], 1, MPI_INT, south_east_rank, 7, comm, &ISReqs[7]);
 
 		/*receive from the neighbours the appropriate columns and rows*/
 		//int MPI_Irecv(void *buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm comm, MPI_Request *request)
-		MPI_Irecv( &cells[1]							, local_columns - 2	, MPI_INT	, north_rank		, 1, comm, &IRReqs[0]);
-		MPI_Irecv( &cells[local_columns*(local_rows-1) + 1]			, local_columns - 2	, MPI_INT	, south_rank	 	, 0, comm, &IRReqs[1]);
-		MPI_Irecv( &cells[local_columns]					, 1			, column	, west_rank	 	, 3, comm, &IRReqs[2]);
-		MPI_Irecv( &cells[local_columns + local_columns -1]			, 1			, column	, east_rank	 	, 2, comm, &IRReqs[3]);
-		MPI_Irecv( &cells[0]							, 1			, MPI_INT	, north_west_rank	, 7, comm, &IRReqs[4]);
-		MPI_Irecv( &cells[local_columns - 1]					, 1			, MPI_INT	, north_east_rank	, 6, comm, &IRReqs[5]);
-		MPI_Irecv( &cells[local_columns * (local_rows-1)]			, 1			, MPI_INT	, south_west_rank	, 5, comm, &IRReqs[6]);
-		MPI_Irecv( &cells[local_columns * (local_rows-1) + (local_columns-1)]	, 1			, MPI_INT	, south_east_rank	, 4, comm, &IRReqs[7]);
+		MPI_Irecv( &cells[1], local_columns - 2	, MPI_INT, north_rank, 1, comm, &IRReqs[0]);
+		MPI_Irecv( &cells[local_columns*(local_rows-1) + 1], local_columns - 2, MPI_INT, south_rank, 0, comm, &IRReqs[1]);
+		MPI_Irecv( &cells[local_columns], 1, column, west_rank, 3, comm, &IRReqs[2]);
+		MPI_Irecv( &cells[local_columns + local_columns -1], 1, column, east_rank, 2, comm, &IRReqs[3]);
+		MPI_Irecv( &cells[0], 1, MPI_INT, north_west_rank, 7, comm, &IRReqs[4]);
+		MPI_Irecv( &cells[local_columns - 1], 1, MPI_INT, north_east_rank, 6, comm, &IRReqs[5]);
+		MPI_Irecv( &cells[local_columns * (local_rows-1)], 1, MPI_INT, south_west_rank, 5, comm, &IRReqs[6]);
+		MPI_Irecv( &cells[local_columns * (local_rows-1) + (local_columns-1)], 1, MPI_INT, south_east_rank, 4, comm, &IRReqs[7]);
 
 		/*calculate the next phase without the info from the neighbours*/
 		for(i=2; i<local_rows-2; i++) {
@@ -217,7 +216,7 @@ int main() {
 
 		for(i=1; i<local_rows-1; i++) {
 			neighbours = Calculate_Neighbours(cells, local_columns, i, local_columns-2);
-			np_cells[local_columns*i + local_columns - 2] = Dead_Or_Alive(cells, local_columns, i, local_columns-1, neighbours);
+			np_cells[local_columns*i + local_columns - 2] = Dead_Or_Alive(cells, local_columns, i, local_columns-2, neighbours);
 
 			neighbours = 0;
 		}
