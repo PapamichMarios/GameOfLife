@@ -73,7 +73,7 @@ int main() {
 			
 	/*make a new datatype so we can pass rows to other processes easier*/
 	MPI_Datatype row;
-	MPI_Type_vector(local_columns, 1, local_rows, MPI_INT, &row);
+	MPI_Type_vector(local_columns, 1, local_columns, MPI_INT, &row);
 	MPI_Type_commit(&row);
 	
 	if( (cells = malloc(local_rows * local_columns * sizeof(int))) == NULL )
@@ -114,13 +114,13 @@ int main() {
 
 		/*send to the neighbours the appropriate columns and rows(non-blocking)*/
 		//MPI_Isend( const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm, MPI_Request *request)
-		MPI_Isend( &cells[local_columns + 1], row, MPI_INT, north_rank, 0, comm, &ISReqs[0]);
-		MPI_Isend( &cells[local_columns * (local_rows - 2) + 1], row, MPI_INT, south_rank, 1, comm, &ISReqs[1]);
+		MPI_Isend(&cells[local_columns], local_columns, MPI_INT, north_rank, 0, comm, &ISReqs[0]);
+		MPI_Isend(&cells[local_columns * (local_rows - 2)], local_columns, MPI_INT, south_rank, 1, comm, &ISReqs[1]);
 
 		/*receive from the neighbours the appropriate columns and rows*/
 		//int MPI_Irecv(void *buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm comm, MPI_Request *request)
-		MPI_Irecv( &cells[0], row, MPI_INT, north_rank, 1, comm, &IRReqs[0]);
-		MPI_Irecv( &cells[local_columns*(local_rows-1) + 1], row, MPI_INT, south_rank, 0, comm, &IRReqs[1]);
+		MPI_Irecv(&cells[0], local_columns, MPI_INT, north_rank, 1, comm, &IRReqs[0]);
+		MPI_Irecv(&cells[local_columns * (local_rows - 1)], local_columns, MPI_INT, south_rank, 0, comm, &IRReqs[1]);
 
 		/*calculate the next phase without the info from the neighbours*/
 		for(i=2; i<local_rows-2; i++) {
@@ -228,7 +228,7 @@ int main() {
 
 		/*===================================================> end calculation time*/
 		local_finish = MPI_Wtime();
-		local_elapsed += local_finish - local_start;		
+		local_elapsed = local_finish - local_start;		
 
 		if (n % REPEAT_TIMES == 0) {
 			MPI_Reduce(&local_elapsed, &elapsed, 1, MPI_DOUBLE, MPI_MAX, 0, comm);

@@ -280,7 +280,7 @@ int main() {
 
 		/*===================================================> end calculation time*/
 		local_finish = MPI_Wtime();
-		local_elapsed += local_finish - local_start;		
+		local_elapsed = local_finish - local_start;		
 
 		if (n % REPEAT_TIMES == 0) {
 			MPI_Reduce(&local_elapsed, &elapsed, 1, MPI_DOUBLE, MPI_MAX, 0, comm);
