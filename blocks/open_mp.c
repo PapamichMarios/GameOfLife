@@ -15,7 +15,7 @@
 #define MAX_TIMES 500	
 #define TERMCHECK_TIMES 10
 
-// #define TERMINATION_CHECK
+#define TERMINATION_CHECK
 
 int main() {
 	
@@ -29,6 +29,7 @@ int main() {
 	int neighbours=0;
 	int local_rows, local_columns;
 #ifdef TERMINATION_CHECK
+	printf("MPI_Allreduce enabled (every 10 iterations)\n");
 	int not_duplicate=1, not_dead=1;
 	int global_duplicate, global_dead;
 #endif
@@ -179,9 +180,7 @@ int main() {
 		MPI_Irecv(&cells[local_columns * (local_rows-1) + (local_columns-1)], 1, MPI_INT, south_east_rank, 4, comm, &IRReqs[7]);
 
 		/*calculate the next phase without the info from the neighbours*/
-		//------> openmp
 	 	#pragma omp parallel for private(i,j) collapse(2)
-		
 		for(i=2; i<local_rows-2; i++) {
 			for(j=2; j<local_columns-2; j++) {
 				neighbours = Calculate_Neighbours(cells, local_columns, i, j);
@@ -190,6 +189,7 @@ int main() {
 				neighbours=0;
 			}
 		}
+
 		//------>openmp
 		/*wait until we receive and send everything from/to neighbours*/
 		MPI_Waitall(8, ISReqs, ISStatus);
@@ -199,7 +199,6 @@ int main() {
 
 		/*calculating first and last row*/
 		#pragma omp parallel for private(j,neighbours)
-
 		for(j=1; j<local_columns-1; j++) {
 			neighbours = Calculate_Neighbours(cells, local_columns, 1, j);
 			np_cells[local_columns + j] = Dead_Or_Alive(cells, local_columns, 1, j, neighbours);
@@ -208,7 +207,6 @@ int main() {
 		}
 
 		#pragma omp parallel for private(j,neighbours)
-
 		for(j=1; j<local_columns-1; j++) {
 			neighbours = Calculate_Neighbours(cells, local_columns, local_rows-2, j);
 			np_cells[local_columns*(local_rows - 2) + j] = Dead_Or_Alive(cells, local_columns, local_rows-2, j, neighbours);
@@ -219,7 +217,6 @@ int main() {
 
 		/*calculating first and last column*/
 		#pragma omp parallel for private(i,neighbours)
-		
 		for(i=1; i<local_rows-1; i++) {
 			neighbours = Calculate_Neighbours(cells, local_columns, i, 1);
 			np_cells[local_columns*i + 1] = Dead_Or_Alive(cells, local_columns, i, 1, neighbours);
@@ -228,7 +225,6 @@ int main() {
 		}
 
 		#pragma omp parallel for private(i,neighbours)
-		
 		for(i=1; i<local_rows-1; i++) {
 			neighbours = Calculate_Neighbours(cells, local_columns, i, local_columns-2);
 			np_cells[local_columns*i + local_columns - 2] = Dead_Or_Alive(cells, local_columns, i, local_columns-1, neighbours);
@@ -254,7 +250,6 @@ int main() {
 			}
 			
 			#pragma omp parallel for private(i,j) collapse(2)
-			//1
 			for(i=1; i<local_rows-1; i++) {
 				for(j=1; j<local_columns-1; j++) {
 					if( cells[local_columns*i + j] == ALIVE ) {
@@ -268,17 +263,17 @@ int main() {
 			MPI_Allreduce(&not_dead, &global_dead, 1, MPI_INT, MPI_MAX, comm);
 			if( global_dead == 0 ) {
 				if( rank == 0)
-					printf("Processes about to exit because every cell is dead!\n");
+					printf("Every cell is dead!\n");
 
-				free(cells);
-				cells = NULL;
+				// free(cells);
+				// cells = NULL;
 
-				free(np_cells);
-				np_cells = NULL;
+				// free(np_cells);
+				// np_cells = NULL;
 
-				MPI_Finalize();
+				// MPI_Finalize();
 
-				exit(EXIT_SUCCESS);
+				// exit(EXIT_SUCCESS);
 			}
 
 			
@@ -286,17 +281,17 @@ int main() {
 			MPI_Allreduce(&not_duplicate, &global_duplicate, 1, MPI_INT, MPI_SUM, comm);
 			if( global_duplicate == 0 ) {
 				if( rank == 0 )
-					printf("Processes about to exit because the next generation is the same as the current one!\n");
+					printf("Next generation is the same as the current one!\n");
 
-				free(cells);
-				cells = NULL;
+				// free(cells);
+				// cells = NULL;
 
-				free(np_cells);
-				np_cells = NULL;
+				// free(np_cells);
+				// np_cells = NULL;
 
-				MPI_Finalize();
+				// MPI_Finalize();
 
-				exit(EXIT_SUCCESS);
+				// exit(EXIT_SUCCESS);
 			}
 		}
 #endif
