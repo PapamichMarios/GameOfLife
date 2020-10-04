@@ -28,6 +28,7 @@ int main() {
 	int local_rows, local_columns;
 
 #ifdef TERMINATION_CHECK
+	printf("MPI_Allreduce enabled (every 10 iterations)\n");
 	int	not_duplicate=1, not_dead=1;
 	int	global_duplicate, global_dead;
 #endif
@@ -245,17 +246,17 @@ int main() {
 			MPI_Allreduce(&not_dead, &global_dead, 1, MPI_INT, MPI_SUM, comm);
 			if( global_dead == 0 ) {
 				if( rank == 0)
-					printf("Processes about to exit because every cell is dead!\n");
+					printf("Every cell is dead!\n");
 
-				free(cells);
-				cells = NULL;
+				// free(cells);
+				// cells = NULL;
 
-				free(np_cells);
-				np_cells = NULL;
+				// free(np_cells);
+				// np_cells = NULL;
 
-				MPI_Finalize();
+				// MPI_Finalize();
 
-				exit(EXIT_SUCCESS);
+				// exit(EXIT_SUCCESS);
 			}
 
 			
@@ -263,17 +264,17 @@ int main() {
 			MPI_Allreduce(&not_duplicate, &global_duplicate, 1, MPI_INT, MPI_SUM, comm);
 			if( global_duplicate == 0 ) {
 				if( rank == 0 )
-					printf("Processes about to exit because the next generation is the same as the current one!\n");
+					printf("Next generation is the same as the current one!\n");
 
-				free(cells);
-				cells = NULL;
+				// free(cells);
+				// cells = NULL;
 
-				free(np_cells);
-				np_cells = NULL;
+				// free(np_cells);
+				// np_cells = NULL;
 
-				MPI_Finalize();
+				// MPI_Finalize();
 
-				exit(EXIT_SUCCESS);
+				// exit(EXIT_SUCCESS);
 			}
 		}
 #endif
