@@ -2,12 +2,11 @@ CC = mpicc
 GCC = gcc
 CE = mpiexec
 BIN = mpi.o open_mp.o
-EXE = mpi open_mp cuda
-FIL = mpi.c open_mp.c cuda.cu
+EXE = mpi open_mp
+FIL = mpi.c open_mp.c
 CFLAGS = -Wall -g
 MATH = -lm
 OPENMP = -fopenmp
-CUDA = nvcc
 
 all: $(EXE)
 
@@ -22,9 +21,6 @@ open_mp: open_mp.o
 
 open_mp.o: open_mp.c
 	$(CC) $(CFLAGS) -c open_mp.c $(MATH) $(OPENMP)
-
-cuda: cuda.cu
-	$(CUDA) cuda.cu -o cuda ../funcs.o
 
 clean:
 	rm -f $(BIN) $(EXE)

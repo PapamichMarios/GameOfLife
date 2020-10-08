@@ -6,11 +6,11 @@
 #include "../timer.h"
 #include "../funcs.h"
 
-#define ROW_SIZE	360
-#define	COLUMN_SIZE	360
+#define ROW_SIZE		320
+#define	COLUMN_SIZE		320
 
 #define REPEAT_TIMES 	20
-#define MAX_TIMES	500	
+#define MAX_TIMES		500	
 #define TERMCHECK_TIMES 10
 
 #define THREAD_SIZE	512
@@ -61,6 +61,7 @@ int main() {
 	double start, finish;
 
 #ifdef TERMINATION_CHECK
+	printf("MPI_Allreduce enabled (every 10 iterations)\n");
 	int	not_dead=0;
 	int	not_duplicate=0;
 #endif
@@ -148,26 +149,26 @@ int main() {
 			if( not_duplicate == 0 )
 				printf("!--->Current cell generation is the same as the next one.\n");
 
-			if( not_dead == 0  || not_duplicate == 0) {
-				/*free memory*/
-				free(cells);
-				free(np_cells);
+			// if( not_dead == 0  || not_duplicate == 0) {
+			// 	/*free memory*/
+			// 	free(cells);
+			// 	free(np_cells);
 
-				cells = NULL;
-				np_cells = NULL;
+			// 	cells = NULL;
+			// 	np_cells = NULL;
 
-				cudaFree(dcells);
-				cudaFree(dnp_cells);
-				cudaFree(darray_size);
-				cudaFree(darray_columns);
+			// 	cudaFree(dcells);
+			// 	cudaFree(dnp_cells);
+			// 	cudaFree(darray_size);
+			// 	cudaFree(darray_columns);
 
-				dcells = NULL;
-				dnp_cells = NULL;
-				darray_size = NULL;
-				darray_columns = NULL;
+			// 	dcells = NULL;
+			// 	dnp_cells = NULL;
+			// 	darray_size = NULL;
+			// 	darray_columns = NULL;
 
-				exit(EXIT_SUCCESS);
-			}
+			// 	exit(EXIT_SUCCESS);
+			// }
 		}
 #endif
 		/*================================================> finish loop calculation time*/

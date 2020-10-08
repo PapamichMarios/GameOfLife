@@ -8,11 +8,11 @@
 
 #include "../funcs.h"
 
-#define ROW_SIZE	480
-#define	COLUMN_SIZE	480
+#define ROW_SIZE		320
+#define	COLUMN_SIZE		320
 
-#define REPEAT_TIMES 20
-#define MAX_TIMES 500
+#define REPEAT_TIMES 	20
+#define MAX_TIMES 		500
 #define TERMCHECK_TIMES 10
 
 int main() {
