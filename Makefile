@@ -13,13 +13,13 @@ all:
 install: funcs.o $(EXE)
 
 sequential: sequential.o
-	$(GCC) $(CFLAGS) -o sequential sequential.o funcs.o
+	$(GCC) $(CFLAGS) -o sequential sequential.o funcs.o -lm
 
 sequential.o: sequential.c
 	$(GCC) $(CFLAGS) -c sequential.c
 
 funcs.o: funcs.c
-	$(GCC) $(CFLAGS) -c funcs.c
+	$(GCC) $(CFLAGS) -c funcs.c -lm
 
 clean:
 	rm -f $(BIN) $(EXE)

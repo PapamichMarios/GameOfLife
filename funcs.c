@@ -1,11 +1,32 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "funcs.h"
 
 void perror_exit(char * message) {
 	perror(message);
 	exit(EXIT_FAILURE);
+}
+
+int* Calculate_Dimensions(int p) {
+	int i=2;
+	static int dim[2];
+
+	dim[0] = 1;
+	dim[1] = p;
+	while(i <= sqrt(p)) {
+		if (p%i == 0) {
+			if (p/i - i < dim[1] - dim[0]) {
+				dim[0] = i;
+				dim[1] = p/i;
+			}
+		}
+
+		i++;
+	}
+
+	return dim;
 }
 
 

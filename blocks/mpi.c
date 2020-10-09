@@ -18,7 +18,8 @@
 int main() {
 	
 	MPI_Comm	comm;
-	int ndims, reorder, periods[2], dim_size[2];
+	int ndims, reorder, periods[2];
+	int * dim_size = NULL;
 	int rank,size;
 	int * cells = NULL; 
 	int * np_cells = NULL;
@@ -56,8 +57,7 @@ int main() {
 
 	/*setting values for MPI_Cart_create*/
 	ndims = 2;			/*  2D matrix/grneighbour_id */
-	dim_size[0] = sqrt(size);	/* rows */
-	dim_size[1] = sqrt(size);	/* columns */
+	dim_size = Calculate_Dimensions(size); /* rows & columns */
 	periods[0] = 1;			/* row periodic */
 	periods[1] = 1;			/* column periodic */
 	reorder = 1;			/* allows processes reordered for efficiency */
@@ -69,8 +69,8 @@ int main() {
 	MPI_Cart_coords(comm, rank, ndims, coords);
 
 	/*constructing the cell array & next phase cell array*/
-	local_rows = ROW_SIZE/sqrt(size) + 2;
-	local_columns = COLUMN_SIZE/sqrt(size) + 2;
+	local_rows = ROW_SIZE/dim_size[0] + 2;
+	local_columns = COLUMN_SIZE/dim_size[1] + 2;
 			
 	/*make a new datatype so we can pass columns to other processes easier*/
 	MPI_Datatype column;
