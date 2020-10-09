@@ -74,7 +74,7 @@ int main() {
 			
 	/*make a new datatype so we can pass columns to other processes easier*/
 	MPI_Datatype column;
-	MPI_Type_vector(local_rows, 1, local_columns, MPI_INT, &column);
+	MPI_Type_vector(local_rows - 2, 1, local_columns, MPI_INT, &column);
 	MPI_Type_commit(&column);
 	
 	if( (cells = malloc(local_rows * local_columns * sizeof(int))) == NULL )
