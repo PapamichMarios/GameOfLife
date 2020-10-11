@@ -86,7 +86,6 @@ int main() {
 
 	srand(time(NULL) + rank);
 
-	omp_set_num_threads(4);
 	#pragma omp parallel for private(i,j) collapse(2)
 	for(i=1; i<local_rows-1; i++) {
 		for(j=1; j<local_columns-1; j++) {
