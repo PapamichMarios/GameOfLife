@@ -1,5 +1,5 @@
-GCC = gcc
-BIN = funcs.o sequential.o
+GCC = gcc -O3
+BIN = sequential.o
 EXE = sequential
 FIL = funcs.c sequential.c
 CFLAGS = -Wall -g
@@ -10,16 +10,10 @@ all:
 	cd blocks && make all
 	cd series && make all
 
-install: funcs.o $(EXE)
+install: $(EXE)
 
-sequential: sequential.o
-	$(GCC) $(CFLAGS) -o sequential sequential.o funcs.o -lm
-
-sequential.o: sequential.c
-	$(GCC) $(CFLAGS) -c sequential.c
-
-funcs.o: funcs.c
-	$(GCC) $(CFLAGS) -c funcs.c -lm
+sequential: 
+	$(GCC) $(CFLAGS) -o sequential sequential.c funcs.c -lm
 
 clean:
 	rm -f $(BIN) $(EXE)

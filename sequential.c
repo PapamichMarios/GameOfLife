@@ -117,16 +117,16 @@ int main() {
 			if( not_duplicate == 0 )
 				printf("!--->Current cell generation is the same as the next one.\n");
 
-			if( not_dead == 0  || not_duplicate == 0) {
-				/*free memory*/
-				free(cells);
-				free(np_cells);
+			// if( not_dead == 0  || not_duplicate == 0) {
+			// 	/*free memory*/
+			// 	free(cells);
+			// 	free(np_cells);
 
-				cells = NULL;
-				np_cells = NULL;
+			// 	cells = NULL;
+			// 	np_cells = NULL;
 
-				exit(EXIT_SUCCESS);
-			}
+			// 	exit(EXIT_SUCCESS);
+			// }
 		}
 #endif
 
